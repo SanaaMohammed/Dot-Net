@@ -1,0 +1,27 @@
+
+        // Cookies
+       
+        public IActionResult setCookies()
+        {
+            // store cookie from server to client (response)
+            HttpContext.Response.Cookies.Append("name", "Sanaa");// session cookies (end with the session end)
+
+            // for presistent cookies
+            CookieOptions options = new CookieOptions();
+            options.Expires=DateTime.Now.AddDays(1);
+            int count = 22;
+            HttpContext.Response.Cookies.Append("age",count.ToString(), options);
+
+            return Content("Cookies saved");
+
+        }
+
+        public IActionResult getCookies() {
+            // restore cookie from server to client (request)
+
+            string name = HttpContext.Request.Cookies["name"];
+            string age = HttpContext.Request.Cookies["age"];
+
+            return Content($"Name =  {name} \t Age = {age}");
+        }
+    

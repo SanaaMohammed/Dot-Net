@@ -1,0 +1,37 @@
+
+            app.Use(async (httpcontext, next) =>
+            {
+                // its better to use await as to terminate writting on the requst 
+                // then excute the next step
+                await httpcontext.Response.WriteAsync("MiddleWare 1\n");
+
+                // call next middleware delegate
+                next.Invoke();// it async function and better to use await as to insure that the next program run correctly
+                
+                // back from middleware 2 
+                await httpcontext.Response.WriteAsync("back from MiddleWare 2 to 1\n");
+
+            });
+            app.Use(async (httpcontext, next) =>
+            {
+                await httpcontext.Response.WriteAsync("MiddleWare 2\n");
+
+                // call next middleware delegate
+                next.Invoke();
+
+                // back from middleware 3  --> terminate middleware
+                await httpcontext.Response.WriteAsync("back from MiddleWare (terminate middleware) to 2\n");
+
+            });
+            app.Run(async (httpcontext) => {
+                await httpcontext.Response.WriteAsync("terminate \n");
+            });
+            // thsi middleware dosn't excute as the terminate terminate the program first
+            // and dosn't excute the next
+            app.Use(async (httpcontext, next) =>
+            {
+                await httpcontext.Response.WriteAsync("MiddleWare 3\n");
+
+                // call next middleware delegate
+                next.Invoke();
+            });

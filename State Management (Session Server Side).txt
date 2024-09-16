@@ -1,0 +1,68 @@
+    /* 
+       1- remember to add (app.UseSession();) middleware
+       2- remember to add (builder.Services.AddSession();) services
+
+
+        - session has alot of setting can be managed like
+         builder.Services.AddSession(options => {
+            options.IdleTimeout = TimeSpan.FromMinutes(30); // session abort
+            options.IdleTimeout = TimeSpan.FromDays(30); // session abort
+            options.IdleTimeout = TimeSpan.FromMinutes(30); // session abort
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true;
+        });
+
+     */
+    public IActionResult SetSession()
+    {
+        // set session (server side)
+        HttpContext.Session.SetString("name", "Sanaa");
+        HttpContext.Session.SetInt32("age", 22);
+        HttpContext.Session.Set("job", Encoding.ASCII.GetBytes("backend developer"));
+
+        return Content(" Set Done");
+    }
+    public IActionResult GetSession()
+    {
+        string name=HttpContext.Session.GetString("name");
+        byte[] bytes = HttpContext.Session.Get("job");
+    
+
+        // note the defult int dosn't allow null
+        // two ways to solve this problem
+        int? age = HttpContext.Session.GetInt32("age");
+
+        return Content($"Name = {name} \t Age = {age}  \t Job={bytes}");
+    }
+
+    public IActionResult setObjectSession()
+    {
+        Employee obj_employee = new Employee
+        {
+            name = "Sanaa",
+            age = 22,
+            job = "backend developer"
+        };
+
+        string str_employee = JsonSerializer.Serialize(obj_employee);
+        HttpContext.Session.SetString("obj", str_employee);
+        return Content("Object saved");
+    }
+    public IActionResult getObjectSession()
+    {
+        Employee obj_employee = 
+            JsonSerializer.Deserialize<Employee>(HttpContext.Session.GetString("obj"));
+
+        return Content($"Name = {obj_employee.name}\tAge = {obj_employee.age}\tJob = {obj_employee.job}");
+
+    }
+
+}
+
+
+public class Employee
+{
+    public string name { get; set; }
+    public string job { get; set; }
+    public int age { get; set; }
+}
