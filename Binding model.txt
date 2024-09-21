@@ -1,0 +1,72 @@
+using iti.Data;
+using iti.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace iti.Controllers
+{
+    public class ass2Controller : Controller
+    {
+        // binding prmitive type
+        // Binding/ShowColor?id=1&name=sanaa
+        // Binding/ShowColor/1?name=sanaa
+        /*
+          -Two way to send id in url
+           1-query string
+              Binding/ShowColor?id=1&name=sanaa
+           2-route parameter  (-only id can send as route parameter)
+             Binding/ShowColor/1?name=sanaa
+         */
+        public IActionResult ShowResult(int id,int name)
+        {
+            return Content($"id={id}\tName={name}");
+        }
+
+        // binding array
+        // Binding/ShowColor?color=red&color=green
+        // Binding/ShowColor?color[0]=red&color[1]=green
+
+        public IActionResult ShowColor(string[] color)
+        {
+            return Content("colors");
+        }
+
+        // binding colliction (list ,deictionary,....)
+        // Binding/TestDic?dic[name]=Sanaa&dic[age]=22
+        public IActionResult TestDic(Dictionary<string, string> dic) {
+            return Content("OK");
+        }
+
+        // binging complex object
+        // Binding/TestObj?name=sanaa&age=22&name=lean&emps[0].name=sanaa&emps[0].salary=10000
+
+        public IActionResult TestObj(Department dept,string name)
+        {
+            return Content($"Obj name={dept.name}\n age={dept.age} \n Emplyee list:\n{dept.emps}");
+        }
+        // SOME NOTES ......
+        /* 
+         - NOTE ONE:
+            the dept object has prop = name and there is a parameter name in action input
+            the compiler will catch first name form input and assign it to both dept.name and name parameter 
+            and ignore all other input names
+        - NOTE TWO
+           how to path list emps int url?
+           url?emps[0].name=sanaa&emps[0].salary=10000
+           and the compiler will bind it with dept.emps list
+         */
+
+
+    }
+    public class Department
+    {
+        public string age { get; set; }
+        public string name { get; set; }
+        public List<Employee>emps { get; set; }
+    }
+    public class Employee
+    {
+        public string name { get; set; }
+        public int salary { get; set; }
+    }
+}
